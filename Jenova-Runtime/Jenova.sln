@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Jenova.Runtime", "Jenova.Runtime.vcxproj", "{8546F551-80FE-49B0-ABE2-9C8498C0B34E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Addons", "Addons", "{A7E91C83-0000-4261-96BC-C441CB33F622}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Jenova.ImGui.OpenGL", "Misc\Jenova.ImGui\Jenova.ImGui.OpenGL.vcxproj", "{47DD0FCD-D17A-4F96-896F-14CFADF71A88}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Jenova.ImGui.Vulkan", "Misc\Jenova.ImGui\Jenova.ImGui.Vulkan.vcxproj", "{322AF536-9528-4B5F-8923-556199520967}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{D1543919-B1CE-49C0-BDFC-395F92064E16}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bridges", "Bridges", "{2470D942-9A61-48E3-8637-FC3B13E2A797}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Jenova.MSVC.Compiler.Bridge", "Misc\Jenova.MCB\Jenova.MSVC.Compiler.Bridge.vcxproj", "{4BB20BB4-67C3-4510-BE08-2EAEEA639BE1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Jenova.MSVC.Linker.Bridge", "Misc\Jenova.MCB\Jenova.MSVC.Linker.Bridge.vcxproj", "{CBA429FC-D4C1-4B83-AC09-E1572A71E917}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MCB", "MCB", "{43497F2F-CAE5-494C-B66C-E3581C8CE337}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Jenova.ImGui.D3D12", "Misc\Jenova.ImGui\Jenova.ImGui.D3D12.vcxproj", "{D73AE6DF-B6B6-4C6A-8A90-D9F13988D386}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8546F551-80FE-49B0-ABE2-9C8498C0B34E}.Release|x64.ActiveCfg = Release|x64
+		{8546F551-80FE-49B0-ABE2-9C8498C0B34E}.Release|x64.Build.0 = Release|x64
+		{47DD0FCD-D17A-4F96-896F-14CFADF71A88}.Release|x64.ActiveCfg = Release|x64
+		{47DD0FCD-D17A-4F96-896F-14CFADF71A88}.Release|x64.Build.0 = Release|x64
+		{322AF536-9528-4B5F-8923-556199520967}.Release|x64.ActiveCfg = Release|x64
+		{322AF536-9528-4B5F-8923-556199520967}.Release|x64.Build.0 = Release|x64
+		{4BB20BB4-67C3-4510-BE08-2EAEEA639BE1}.Release|x64.ActiveCfg = Release|x64
+		{4BB20BB4-67C3-4510-BE08-2EAEEA639BE1}.Release|x64.Build.0 = Release|x64
+		{CBA429FC-D4C1-4B83-AC09-E1572A71E917}.Release|x64.ActiveCfg = Release|x64
+		{CBA429FC-D4C1-4B83-AC09-E1572A71E917}.Release|x64.Build.0 = Release|x64
+		{D73AE6DF-B6B6-4C6A-8A90-D9F13988D386}.Release|x64.ActiveCfg = Release|x64
+		{D73AE6DF-B6B6-4C6A-8A90-D9F13988D386}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A7E91C83-0000-4261-96BC-C441CB33F622} = {D1543919-B1CE-49C0-BDFC-395F92064E16}
+		{47DD0FCD-D17A-4F96-896F-14CFADF71A88} = {A7E91C83-0000-4261-96BC-C441CB33F622}
+		{322AF536-9528-4B5F-8923-556199520967} = {A7E91C83-0000-4261-96BC-C441CB33F622}
+		{2470D942-9A61-48E3-8637-FC3B13E2A797} = {D1543919-B1CE-49C0-BDFC-395F92064E16}
+		{4BB20BB4-67C3-4510-BE08-2EAEEA639BE1} = {43497F2F-CAE5-494C-B66C-E3581C8CE337}
+		{CBA429FC-D4C1-4B83-AC09-E1572A71E917} = {43497F2F-CAE5-494C-B66C-E3581C8CE337}
+		{43497F2F-CAE5-494C-B66C-E3581C8CE337} = {2470D942-9A61-48E3-8637-FC3B13E2A797}
+		{D73AE6DF-B6B6-4C6A-8A90-D9F13988D386} = {A7E91C83-0000-4261-96BC-C441CB33F622}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DDB23943-0BC9-4FC9-8328-8BCC64209D9F}
+	EndGlobalSection
+EndGlobal

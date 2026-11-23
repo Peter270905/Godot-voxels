@@ -1,0 +1,60 @@
+# ========================================================
+# Git Ignore for Godot-voxels (Custom Engine Workspace)
+# ========================================================
+
+# Internal git backups
+*.git_backup
+.git_backup/
+**/.git_backup/
+
+# Compiled binaries and debug files
+*.exe
+*.dll
+*.so
+*.dylib
+*.pdb
+*.lib
+*.exp
+*.ilk
+*.a
+*.o
+*.obj
+*.iobj
+*.ipdb
+
+# SCons build artifacts & caches
+.sconsign*
+*.dblite
+*.gen.cpp
+*.gen.h
+godot/bin/
+bin/
+obj/
+compile_commands.json
+platform/windows/godot_res.res
+*.ninja
+.ninja/
+run_ninja_env.bat
+vc140.pdb
+
+# Visual Studio / IDE files
+.vs/
+*.vcxproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Jenova Runtime build output, SDKs and toolchains
+Jenova-Runtime/Win64/
+Jenova-Runtime/Linux64/
+Jenova-Runtime/Libs/
+Jenova-Runtime/Dependencies/
+Jenova-Runtime/Toolchain/
+Jenova-Runtime/Distribution/
+Jenova-Runtime/Backup-*/
+Jenova-Runtime/Cache/
+
+# Python cache
+__pycache__/
+*.pyc
