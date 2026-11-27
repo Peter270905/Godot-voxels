@@ -1,10 +1,33 @@
-# Godot Engine
+# Godot Engine (Godot-voxels Custom Fork)
 
 <p align="center">
   <a href="https://godotengine.org">
     <img src="misc/logo/logo_outlined.svg" width="400" alt="Godot Engine logo">
   </a>
 </p>
+
+## Custom Voxel Modifications (`modules/voxel`)
+
+This fork extends **Voxel Tools** (`modules/voxel`) with the following custom features:
+
+### 1. Per-Block Model Variants / BlockStates (up to 16 variants per `block_id`)
+- **`VoxelBlockyModel.variants`** (`Array[VoxelBlockyModel]`): assign up to 16 sub-models/rotations (`0..15`) to a single `block_id` without polluting `VoxelBlockyLibrary` with duplicate IDs.
+- **`VoxelBuffer.CHANNEL_VARIANT`** (alias for `CHANNEL_DATA6`): stores the active variant index (`0..15`) per voxel. Remains uniform-compressed (zero memory overhead) in chunks without variants and serializes automatically with `VoxelStreamSQLite`.
+- **Full engine integration:**
+  - `VoxelMesherBlocky` & `VoxelBlockyLibrary`: bakes variants, computes `side_pattern_culling`, and renders the selected variant mesh.
+  - `VoxelBoxMover`: resolves AABB physics collisions (including protruding boxes) for the active variant.
+  - `VoxelTool::raycast()`: tests ray intersections against the active variant's collision AABBs.
+
+### 2. Voxel Light Engine (`CHANNEL_LIGHT`)
+- **`VoxelBuffer.CHANNEL_LIGHT`** (alias for `CHANNEL_DATA5`): stores packed sunlight and blocklight levels.
+- `VoxelBlockyModel.light_emission` / `light_filter` (`0..15`) with propagation in `VoxelLightEngine` and vertex color output in `VoxelMesherBlocky`.
+
+### Building (Windows)
+```bash
+scons platform=windows target=editor accesskit=no d3d12=no -j12
+```
+
+---
 
 ## 2D and 3D cross-platform game engine
 
