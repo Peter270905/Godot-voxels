@@ -31,6 +31,7 @@ public:
 	static const uint16_t AIR_ID = 0;
 	static const uint8_t NULL_FLUID_INDEX = 255;
 	static constexpr uint32_t MAX_SURFACES = 2;
+	static constexpr unsigned int MAX_VARIANTS = 16;
 
 	VoxelBlockyModel();
 
@@ -113,6 +114,10 @@ public:
 		return _collision_aabbs;
 	}
 
+	const StdVector<Ref<VoxelBlockyModel>> &get_variants_v() const {
+		return _variants;
+	}
+
 	struct LegacyProperties {
 		enum GeometryType { GEOMETRY_NONE, GEOMETRY_CUBE, GEOMETRY_MESH };
 
@@ -159,6 +164,8 @@ private:
 
 	TypedArray<AABB> _b_get_collision_aabbs() const;
 	void _b_set_collision_aabbs(TypedArray<AABB> array);
+	TypedArray<VoxelBlockyModel> _b_get_variants() const;
+	void _b_set_variants(TypedArray<VoxelBlockyModel> array);
 	void _b_rotate_90(Vector3i::Axis axis, bool clockwise);
 
 	// Properties
@@ -196,6 +203,8 @@ private:
 	uint8_t _light_filter = 15;
 
 	Color _color;
+
+	StdVector<Ref<VoxelBlockyModel>> _variants;
 
 	LegacyProperties _legacy_properties;
 };

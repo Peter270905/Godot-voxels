@@ -74,18 +74,39 @@ void VoxelBlockyLibrary::bake() {
 	StdVector<Ref<VoxelBlockyFluid>> indexed_fluids;
 
 	_baked_data.models.resize(_voxel_models.size());
+	_baked_data.extra_variant_models.clear();
 	for (uint16_t model_index = 0; model_index < _voxel_models.size(); ++model_index) {
 		Ref<VoxelBlockyModel> config = _voxel_models[model_index];
 		blocky::BakedModel &baked_model = _baked_data.models[model_index];
+		baked_model.clear();
 
 		if (config.is_valid()) {
+			const StdVector<Ref<VoxelBlockyModel>> &variants = config->get_variants_v();
+			Ref<VoxelBlockyModel> base_config = config;
+			if (!variants.empty() && variants[0].is_valid()) {
+				base_config = variants[0];
+			}
+
 			blocky::ModelBakingContext context{
 				baked_model, _bake_tangents, materials, indexed_fluids, _baked_data.fluids
 			};
-			config->bake(context);
+			base_config->bake(context);
 
-		} else {
-			baked_model.clear();
+			const size_t variant_count = math::min(variants.size(), size_t(VoxelBlockyModel::MAX_VARIANTS));
+			for (size_t v = 1; v < variant_count; ++v) {
+				Ref<VoxelBlockyModel> var_config = variants[v];
+				if (var_config.is_valid()) {
+					const uint32_t extra_idx = _baked_data.extra_variant_models.size();
+					_baked_data.extra_variant_models.push_back(blocky::BakedModel());
+					blocky::BakedModel &extra_baked = _baked_data.extra_variant_models.back();
+					blocky::ModelBakingContext var_context{
+						extra_baked, _bake_tangents, materials, indexed_fluids, _baked_data.fluids
+					};
+					var_config->bake(var_context);
+					baked_model.variant_baked_indices[v] = extra_idx;
+					baked_model.has_variants = true;
+				}
+			}
 		}
 	}
 

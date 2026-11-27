@@ -44,6 +44,8 @@ void generate_mesh(
 		StdVector<VoxelMesherBlocky::Arrays> &out_arrays_per_material,
 		VoxelMesher::Output::CollisionSurface *collision_surface,
 		const Span<const Type_T> type_buffer,
+		const Span<const uint8_t> variant_buffer,
+		const uint8_t uniform_variant,
 		const Span<const uint8_t> light_buffer,
 		const uint8_t uniform_light,
 		const bool has_light_data,
@@ -77,6 +79,13 @@ void generate_mesh(
 			return light_buffer[idx];
 		}
 		return uniform_light;
+	};
+
+	auto get_variant_at = [&](int idx) -> uint8_t {
+		if (variant_buffer.size() > 0) {
+			return variant_buffer[idx];
+		}
+		return uniform_variant;
 	};
 
 	// Data must be padded, hence the off-by-one
@@ -159,7 +168,7 @@ void generate_mesh(
 					continue;
 				}
 
-				const BakedModel &voxel = library.models[voxel_id];
+				const BakedModel &voxel = library.get_model(voxel_id, get_variant_at(voxel_index));
 				const BakedModel::Model &model = voxel.model;
 
 				// Calculate visibility of sides
@@ -170,11 +179,12 @@ void generate_mesh(
 						continue;
 					}
 
-					const uint32_t neighbor_voxel_id = type_buffer[voxel_index + side_neighbor_lut[side]];
+					const int neighbor_idx = voxel_index + side_neighbor_lut[side];
+					const uint32_t neighbor_voxel_id = type_buffer[neighbor_idx];
 
 					// Invalid voxels are treated like air
 					if (neighbor_voxel_id < library.models.size()) {
-						const BakedModel &other_vt = library.models[neighbor_voxel_id];
+						const BakedModel &other_vt = library.get_model(neighbor_voxel_id, get_variant_at(neighbor_idx));
 						if (!is_face_visible_regardless_of_shape(voxel, other_vt)) {
 							// Visibility depends on the shape
 							if (!is_face_visible_according_to_shape(library, voxel, other_vt, side)) {
@@ -236,7 +246,7 @@ void generate_mesh(
 
 						// Invalid voxels are treated like air
 						if (neighbor_voxel_id < library.models.size()) {
-							const BakedModel &other_vt = library.models[neighbor_voxel_id];
+							const BakedModel &other_vt = library.get_model(neighbor_voxel_id, get_variant_at(neighbor_voxel_index));
 
 							const StdUnorderedMap<uint32_t, FixedArray<BakedModel::SideSurface, MAX_SURFACES>>
 									&cutout_side_surfaces_by_neighbor_shape = model.cutout_side_surfaces[side];
@@ -757,6 +767,12 @@ void VoxelMesherBlocky::build(VoxelMesher::Output &output, const VoxelMesher::In
 		const blocky::TintSampler tint_sampler =
 				blocky::TintSampler::create(voxels, static_cast<blocky::TintSampler::Mode>(params.tint_mode));
 
+		Span<const uint8_t> variant_channel;
+		if (voxels.get_channel_depth(VoxelBuffer::CHANNEL_VARIANT) == VoxelBuffer::DEPTH_8_BIT) {
+			voxels.get_channel_as_bytes_read_only(VoxelBuffer::CHANNEL_VARIANT, variant_channel);
+		}
+		const uint8_t uniform_variant = static_cast<uint8_t>(voxels.get_voxel(0, 0, 0, VoxelBuffer::CHANNEL_VARIANT));
+
 		Span<const uint8_t> light_channel;
 		const bool has_light_channel = voxels.get_channel_as_bytes_read_only(VoxelBuffer::CHANNEL_LIGHT, light_channel);
 		const uint8_t uniform_light = static_cast<uint8_t>(voxels.get_voxel(0, 0, 0, VoxelBuffer::CHANNEL_LIGHT));
@@ -768,6 +784,8 @@ void VoxelMesherBlocky::build(VoxelMesher::Output &output, const VoxelMesher::In
 						arrays_per_material,
 						collision_surface,
 						raw_channel,
+						variant_channel,
+						uniform_variant,
 						light_channel,
 						uniform_light,
 						has_light_data,
@@ -790,6 +808,8 @@ void VoxelMesherBlocky::build(VoxelMesher::Output &output, const VoxelMesher::In
 						arrays_per_material,
 						collision_surface,
 						model_ids,
+						variant_channel,
+						uniform_variant,
 						light_channel,
 						uniform_light,
 						has_light_data,
@@ -939,7 +959,7 @@ void VoxelMesherBlocky::build(VoxelMesher::Output &output, const VoxelMesher::In
 // }
 
 int VoxelMesherBlocky::get_used_channels_mask() const {
-	int mask = (1 << VoxelBuffer::CHANNEL_TYPE);
+	int mask = (1 << VoxelBuffer::CHANNEL_TYPE) | (1 << VoxelBuffer::CHANNEL_VARIANT);
 	if (get_light_enabled()) {
 		mask |= (1 << VoxelBuffer::CHANNEL_LIGHT);
 	}

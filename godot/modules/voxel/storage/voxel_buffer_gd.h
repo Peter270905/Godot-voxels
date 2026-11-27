@@ -38,6 +38,7 @@ public:
 		CHANNEL_DATA5 = zylann::voxel::VoxelBuffer::CHANNEL_DATA5,
 		CHANNEL_LIGHT = zylann::voxel::VoxelBuffer::CHANNEL_LIGHT,
 		CHANNEL_DATA6 = zylann::voxel::VoxelBuffer::CHANNEL_DATA6,
+		CHANNEL_VARIANT = zylann::voxel::VoxelBuffer::CHANNEL_VARIANT,
 		CHANNEL_DATA7 = zylann::voxel::VoxelBuffer::CHANNEL_DATA7,
 		MAX_CHANNELS = zylann::voxel::VoxelBuffer::MAX_CHANNELS,
 	};
@@ -51,6 +52,7 @@ public:
 		CHANNEL_DATA5_BIT = 1 << CHANNEL_DATA5,
 		CHANNEL_LIGHT_BIT = 1 << CHANNEL_LIGHT,
 		CHANNEL_DATA6_BIT = 1 << CHANNEL_DATA6,
+		CHANNEL_VARIANT_BIT = 1 << CHANNEL_VARIANT,
 		CHANNEL_DATA7_BIT = 1 << CHANNEL_DATA7,
 		ALL_CHANNELS_MASK = (1 << MAX_CHANNELS) - 1,
 	};

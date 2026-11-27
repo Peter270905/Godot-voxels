@@ -46,6 +46,7 @@ public:
 		CHANNEL_DATA5,
 		CHANNEL_LIGHT = CHANNEL_DATA5,
 		CHANNEL_DATA6,
+		CHANNEL_VARIANT = CHANNEL_DATA6,
 		CHANNEL_DATA7,
 		// Arbitrary value, 8 should be enough. Tweak for your needs.
 		MAX_CHANNELS

@@ -137,11 +137,24 @@ struct BakedModel {
 	uint8_t light_emission = 0;
 	uint8_t light_filter = 15;
 
+	bool has_variants = false;
+	FixedArray<uint32_t, 16> variant_baked_indices;
+
+	BakedModel() {
+		for (uint32_t &idx : variant_baked_indices) {
+			idx = UINT32_MAX;
+		}
+	}
+
 	inline void clear() {
 		model.clear();
 		empty = true;
 		light_emission = 0;
 		light_filter = 1;
+		has_variants = false;
+		for (uint32_t &idx : variant_baked_indices) {
+			idx = UINT32_MAX;
+		}
 	}
 };
 
@@ -179,6 +192,7 @@ struct BakedLibrary {
 	unsigned int side_pattern_count = 0;
 	// Lots of data can get moved but it's only on load.
 	StdVector<BakedModel> models;
+	StdVector<BakedModel> extra_variant_models;
 	StdVector<BakedFluid> fluids;
 
 	// struct VariantInfo {
@@ -196,6 +210,19 @@ struct BakedLibrary {
 
 	inline bool has_model(uint32_t i) const {
 		return i < models.size();
+	}
+
+	inline const BakedModel &get_model(uint32_t type_id, uint8_t variant_id) const {
+		const BakedModel &base = models[type_id];
+		if (variant_id == 0 || !base.has_variants) {
+			return base;
+		}
+		const uint8_t idx = variant_id & 0x0F;
+		const uint32_t extra_idx = base.variant_baked_indices[idx];
+		if (extra_idx != UINT32_MAX && extra_idx < extra_variant_models.size()) {
+			return extra_variant_models[extra_idx];
+		}
+		return base;
 	}
 
 	inline bool get_side_pattern_occlusion(unsigned int pattern_a, unsigned int pattern_b) const {
@@ -220,7 +247,7 @@ struct BakedLibrary {
 
 		constexpr float EPSILON = 0.0001f;
 
-		for (const BakedModel &bm : models) {
+		auto scan_model_aabbs = [&](const BakedModel &bm) {
 			for (const AABB &aabb : bm.box_collision_aabbs) {
 				const Vector3 aabb_min = aabb.position;
 				const Vector3 aabb_max = aabb.position + aabb.size;
@@ -245,6 +272,13 @@ struct BakedLibrary {
 					max_z = aabb_max.z;
 				}
 			}
+		};
+
+		for (const BakedModel &bm : models) {
+			scan_model_aabbs(bm);
+		}
+		for (const BakedModel &bm : extra_variant_models) {
+			scan_model_aabbs(bm);
 		}
 
 		if (min_x < -EPSILON || min_y < -EPSILON || min_z < -EPSILON ||

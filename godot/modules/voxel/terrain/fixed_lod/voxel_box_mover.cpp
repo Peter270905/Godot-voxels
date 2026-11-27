@@ -210,6 +210,7 @@ void collect_boxes_blocky(
 	Ref<VoxelBlockyLibraryBase> library_ref = mesher.get_library();
 	ERR_FAIL_COND_MSG(library_ref.is_null(), "VoxelMesherBlocky has no library assigned");
 	const int channel = VoxelBuffer::CHANNEL_TYPE;
+	const int variant_channel = VoxelBuffer::CHANNEL_VARIANT;
 	VoxelSingleValue defval;
 	defval.i = 0;
 
@@ -227,7 +228,11 @@ void collect_boxes_blocky(
 				const int type_id = voxels.get_voxel(i, channel, defval).i;
 
 				if (baked_data.has_model(type_id)) {
-					const blocky::BakedModel &model = baked_data.models[type_id];
+					uint8_t variant_id = 0;
+					if (baked_data.models[type_id].has_variants) {
+						variant_id = static_cast<uint8_t>(voxels.get_voxel(i, variant_channel, defval).i);
+					}
+					const blocky::BakedModel &model = baked_data.get_model(type_id, variant_id);
 
 					if ((model.box_collision_mask & collision_mask) == 0) {
 						continue;

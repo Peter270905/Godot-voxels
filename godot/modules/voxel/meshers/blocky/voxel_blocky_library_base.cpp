@@ -703,9 +703,8 @@ void generate_side_culling_matrix(BakedLibrary &baked_data) {
 	StdVector<Pattern> patterns;
 	uint32_t full_side_pattern_index = VoxelBlockyLibraryBase::NULL_INDEX;
 
-	// Gather patterns for each model
-	for (uint16_t type_id = 0; type_id < baked_data.models.size(); ++type_id) {
-		BakedModel &model_data = baked_data.models[type_id];
+	// Gather patterns for each model and its variants
+	auto gather_model_patterns = [&](BakedModel &model_data) {
 		model_data.contributes_to_ao = true;
 
 		// For each side
@@ -713,14 +712,7 @@ void generate_side_culling_matrix(BakedLibrary &baked_data) {
 			std::bitset<RASTER_SIZE * RASTER_SIZE> bitmap;
 
 			if (model_data.fluid_index != VoxelBlockyModel::NULL_FLUID_INDEX) {
-				// Fluids don't have per-model static geometry, but their culling rules are still similar to a cube.
-				// There is never a side on the top, it's either slightly lower (not on the side) or culled by
-				// neighboring water. But we still need to fill bits as if there was one, otherwise the bottom of water
-				// voxels would not get culled when stacked with other water voxels
-				// if (side != Cube::SIDE_POSITIVE_Y) {
 				bitmap.set();
-				// }
-				// Fluids don't contribute to AO for now
 				model_data.contributes_to_ao = false;
 			} else {
 				rasterize_side_all_surfaces(model_data, side, bitmap);
@@ -765,11 +757,16 @@ void generate_side_culling_matrix(BakedLibrary &baked_data) {
 				model_data.contributes_to_ao = false;
 			}
 
-			// pattern->occurrences.push_back(TypeAndSide{ type_id, side });
 			model_data.model.side_pattern_indices[side] = pattern_index;
-
 		} // side
-	} // type
+	};
+
+	for (uint16_t type_id = 0; type_id < baked_data.models.size(); ++type_id) {
+		gather_model_patterns(baked_data.models[type_id]);
+	}
+	for (size_t v_id = 0; v_id < baked_data.extra_variant_models.size(); ++v_id) {
+		gather_model_patterns(baked_data.extra_variant_models[v_id]);
+	}
 
 	// Find which pattern occludes which
 

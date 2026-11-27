@@ -592,6 +592,28 @@ void VoxelBlockyModel::_b_rotate_90(Vector3i::Axis axis, bool clockwise) {
 	rotate_90(math::Axis(axis), clockwise);
 }
 
+TypedArray<VoxelBlockyModel> VoxelBlockyModel::_b_get_variants() const {
+	TypedArray<VoxelBlockyModel> array;
+	array.resize(_variants.size());
+	for (size_t i = 0; i < _variants.size(); ++i) {
+		array[i] = _variants[i];
+	}
+	return array;
+}
+
+void VoxelBlockyModel::_b_set_variants(TypedArray<VoxelBlockyModel> array) {
+	unsigned int count = array.size();
+	if (count > MAX_VARIANTS) {
+		ZN_PRINT_ERROR(format("Setting more than {} variants is not supported (received {}). Extra variants will be ignored.", MAX_VARIANTS, array.size()));
+		count = MAX_VARIANTS;
+	}
+	_variants.resize(count);
+	for (unsigned int i = 0; i < count; ++i) {
+		_variants[i] = array[i];
+	}
+	emit_changed();
+}
+
 // void ortho_simplify(Span<const Vector3f> vertices, Span<const int> indices, StdVector<int> &output) {
 // TODO Optimization: implement mesh simplification based on axis-aligned triangles.
 // It could be very effective on mesh collisions with the blocky mesher.
@@ -650,6 +672,9 @@ void VoxelBlockyModel::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_light_filter", "filter"), &VoxelBlockyModel::set_light_filter);
 	ClassDB::bind_method(D_METHOD("get_light_filter"), &VoxelBlockyModel::get_light_filter);
 
+	ClassDB::bind_method(D_METHOD("set_variants", "variants"), &VoxelBlockyModel::_b_set_variants);
+	ClassDB::bind_method(D_METHOD("get_variants"), &VoxelBlockyModel::_b_get_variants);
+
 	// TODO Update to StringName in Godot 4
 	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "color"), "set_color", "get_color");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "transparency_index"), "set_transparency_index", "get_transparency_index");
@@ -668,6 +693,17 @@ void VoxelBlockyModel::_bind_methods() {
 	);
 
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "lod_skirts_enabled"), "set_lod_skirts_enabled", "get_lod_skirts_enabled");
+
+	ADD_PROPERTY(
+			PropertyInfo(
+					Variant::ARRAY,
+					"variants",
+					PROPERTY_HINT_ARRAY_TYPE,
+					MAKE_RESOURCE_TYPE_HINT(VoxelBlockyModel::get_class_static())
+			),
+			"set_variants",
+			"get_variants"
+	);
 
 	ADD_GROUP("Box collision", "");
 

@@ -280,7 +280,11 @@ Ref<VoxelRaycastResult> raycast_blocky(
 					return false;
 				}
 
-				const blocky::BakedModel &model = baked_data.models[v];
+				uint8_t variant_id = 0;
+				if (baked_data.models[v].has_variants) {
+					variant_id = static_cast<uint8_t>(data.get_voxel(rs.hit_position, VoxelBuffer::CHANNEL_VARIANT, defval).i);
+				}
+				const blocky::BakedModel &model = baked_data.get_model(v, variant_id);
 				if ((model.box_collision_mask & collision_mask) == 0) {
 					return false;
 				}
@@ -324,7 +328,11 @@ Ref<VoxelRaycastResult> raycast_blocky(
 							continue;
 						}
 
-						const blocky::BakedModel &model = baked_data.models[v];
+						uint8_t variant_id = 0;
+						if (baked_data.models[v].has_variants) {
+							variant_id = static_cast<uint8_t>(data.get_voxel(cand, VoxelBuffer::CHANNEL_VARIANT, defval).i);
+						}
+						const blocky::BakedModel &model = baked_data.get_model(v, variant_id);
 						if ((model.box_collision_mask & collision_mask) == 0) {
 							continue;
 						}
